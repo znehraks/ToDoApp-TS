@@ -1,8 +1,9 @@
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { Categories, IToDo, toDoState } from "./atoms";
 
 const ToDo = ({ text, category, id }: IToDo) => {
-  const setToDos = useSetRecoilState(toDoState);
+  const [toDos, setToDos] = useRecoilState(toDoState);
+  localStorage.setItem("toDos", JSON.stringify(toDos));
   const onClick = (newCategory: Categories) => {
     setToDos((oldToDos) => {
       const targetIndex = oldToDos.findIndex((toDo) => toDo.id === id);
@@ -13,6 +14,9 @@ const ToDo = ({ text, category, id }: IToDo) => {
         ...oldToDos.slice(targetIndex + 1),
       ];
     });
+  };
+  const removeToDo = (id: IToDo["id"]) => {
+    setToDos(toDos.filter((toDo) => toDo.id !== id));
   };
   return (
     <li>
@@ -38,6 +42,7 @@ const ToDo = ({ text, category, id }: IToDo) => {
           Done
         </button>
       )}
+      <button onClick={() => removeToDo(id)}>DELETE</button>
     </li>
   );
 };
